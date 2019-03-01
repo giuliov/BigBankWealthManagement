@@ -328,3 +328,10 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+
+## Additions for this repo
+.vscode/
+.terraform/
+_plan.dat
+build/Set-AzureRMSecrets.ps1
+build/terraform.exe
