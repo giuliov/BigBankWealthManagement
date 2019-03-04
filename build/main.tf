@@ -6,7 +6,7 @@ resource "azurerm_resource_group" "bbwm" {
     environment = "${var.env_name}"
   }
 }
-resource "random_id" "server" {
+resource "random_id" "bbwm" {
   keepers = {
     # Generate a unique id based on Resource Group name
     rg_id = "${azurerm_resource_group.bbwm.name}"
@@ -16,11 +16,15 @@ resource "random_id" "server" {
 }
 
 resource "azurerm_storage_account" "bbwm" {
-  name                     = "bbwm${random_id.server.hex}"
+  name                     = "bbwm${random_id.bbwm.hex}"
   resource_group_name      = "${azurerm_resource_group.bbwm.name}"
   location                 = "${azurerm_resource_group.bbwm.location}"
   account_tier             = "Standard"
   account_replication_type = "LRS"
+
+  tags {
+    environment = "${var.env_name}"
+  }
 }
 
 resource "azurerm_app_service_plan" "bbwm" {
@@ -34,6 +38,10 @@ resource "azurerm_app_service_plan" "bbwm" {
     tier = "Dynamic"
     size = "Y1"
   }
+
+  tags {
+    environment = "${var.env_name}"
+  }
 }
 
 resource "azurerm_application_insights" "bbwm" {
@@ -41,6 +49,10 @@ resource "azurerm_application_insights" "bbwm" {
   location            = "${azurerm_resource_group.bbwm.location}"
   resource_group_name = "${azurerm_resource_group.bbwm.name}"
   application_type    = "Web"
+
+  tags {
+    environment = "${var.env_name}"
+  }
 }
 
 resource "azurerm_function_app" "bbwm" {
@@ -54,5 +66,40 @@ resource "azurerm_function_app" "bbwm" {
 
   app_settings {
     "APPINSIGHTS_INSTRUMENTATIONKEY" = "${azurerm_application_insights.bbwm.instrumentation_key}"
+  }
+
+  tags {
+    environment = "${var.env_name}"
+  }
+}
+
+resource "azurerm_cosmosdb_account" "bbwm" {
+  name                = "bbwm${random_id.bbwm.hex}-cosmosdb"
+  location            = "${azurerm_resource_group.bbwm.location}"
+  resource_group_name = "${azurerm_resource_group.bbwm.name}"
+  offer_type          = "Standard"
+  kind                = "GlobalDocumentDB"
+
+  enable_automatic_failover = true
+
+  consistency_policy {
+    consistency_level       = "BoundedStaleness"
+    max_interval_in_seconds = 10
+    max_staleness_prefix    = 200
+  }
+
+  geo_location {
+    location          = "${var.paired_location}"
+    failover_priority = 1
+  }
+
+  geo_location {
+    prefix            = "bbwm${random_id.bbwm.hex}-cosmosdb-customid"
+    location          = "${azurerm_resource_group.bbwm.location}"
+    failover_priority = 0
+  }
+
+  tags {
+    environment = "${var.env_name}"
   }
 }

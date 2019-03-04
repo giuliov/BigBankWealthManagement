@@ -11,6 +11,6 @@ output "ip_to_whitelist" {
 output "publish_credential" {
   value = "${azurerm_function_app.bbwm.site_credential}"
 }
- 
+
 # EOF
 
