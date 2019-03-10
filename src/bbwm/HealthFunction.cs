@@ -12,9 +12,22 @@ namespace bbwm
         [FunctionName("health")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
+            string depth,
             ILogger log)
         {
             log.LogInformation("/health endpoint called.");
+
+            switch (depth.ToLowerInvariant())
+            {
+                case "dependencies":
+                    var portfolioRepo = new CustomerPortfolioRepository(log);
+                    await portfolioRepo.HealthCheck();
+                    var quoteRepo = new QuoteRepository(log);
+                    await quoteRepo.HealthCheck();
+                    break;
+                default:
+                    break;
+            }
 
             return (ActionResult)new OkObjectResult($"healthy");
         }
