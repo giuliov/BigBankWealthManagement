@@ -13,7 +13,7 @@ namespace bbwm.unittests
         public async void Http_trigger_should_return_known_string()
         {
             var request = TestFactory.CreateHttpRequest("not-used", null);
-            var response = (OkObjectResult)await HealthFunction.Run(request, logger);
+            var response = (OkObjectResult)await HealthFunction.Run(request, "", logger);
             Assert.Equal("healthy", response.Value);
         }
     }
