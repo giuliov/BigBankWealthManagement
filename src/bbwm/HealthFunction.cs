@@ -11,11 +11,11 @@ namespace bbwm
     {
         [FunctionName("health")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "health/{depth}")] HttpRequest req,
             string depth,
             ILogger log)
         {
-            log.LogInformation("/health endpoint called.");
+            log.LogInformation("health endpoint called.");
 
             switch (depth.ToLowerInvariant())
             {

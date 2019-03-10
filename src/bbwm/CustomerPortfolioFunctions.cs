@@ -5,6 +5,8 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace bbwm
 {
@@ -12,11 +14,14 @@ namespace bbwm
     {
         [FunctionName("customerPortfolio")]
         public static async Task<IActionResult> Upsert(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "customerPortfolio/{customerId}")] HttpRequest req,
             string customerId,
-            string symbol,
             ILogger log)
         {
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            dynamic data = JsonConvert.DeserializeObject(requestBody);
+            string symbol = data?.symbol;
+
             var repo = new CustomerPortfolioRepository(log);
             await repo.AddSymbolToCustomerPortfolio(customerId, symbol);
 
@@ -25,7 +30,7 @@ namespace bbwm
 
         [FunctionName("customerPortfolioValues")]
         public static async Task<IActionResult> GetValues(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "customerPortfolio/{customerId}")] HttpRequest req,
             string customerId,
             ILogger log)
         {
