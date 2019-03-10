@@ -5,23 +5,43 @@ pool:
   vmImage: 'vs2017-win2016'
 
 variables:
-  buildConfiguration: 'Release'
+  BuildConfiguration: 'Release'
 
 steps:
 - task: DotNetCoreInstaller@0
   inputs:
     version: '2.1.300'
-- script: dotnet restore
-- script: dotnet build
+- task: DotNetCoreCLI@2
+  displayName: Restore
+  inputs:
+    command: restore
+    projects: 'src/**/*.csproj'
+- task: DotNetCoreCLI@2
+  displayName: Build
+  inputs:
+    command: build
+    projects: 'src/**/*.csproj'
+    arguments: '--configuration $(BuildConfiguration)'
 - task: DotNetCoreCLI@2
   inputs:
     command: test
-    projects: '**/*Tests/*.csproj'
-    arguments: '--configuration $(buildConfiguration)'
+    projects: 'src/**/*tests.csproj'
+    arguments: '--configuration $(BuildConfiguration)'
 - task: DotNetCoreCLI@2
   inputs:
     command: publish
-    publishWebProjects: True
+    publishWebProjects: false
+    projects: 'src/**/bbwm.csproj'
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
     zipAfterPublish: True
-#TODO deploy
+- task: AzureRmWebAppDeployment@4
+  displayName: 'Azure App Service Deploy: bbwm'
+  inputs:
+    azureSubscription: 'Visual Studio Enterprise (MVP) (9c08dcdd-9dcd-4955-9419-9c1161171463)'
+    WebAppName: bbwm
+    packageForLinux: '$(build.artifactstagingdirectory)/**/bbwm.zip'
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
+  condition: succeededOrFailed()
