@@ -6,6 +6,7 @@ resource "azurerm_resource_group" "bbwm" {
     environment = "${var.env_name}"
   }
 }
+
 resource "random_id" "bbwm" {
   keepers = {
     # Generate a unique id based on Resource Group name
@@ -61,8 +62,8 @@ resource "azurerm_function_app" "bbwm" {
   resource_group_name       = "${azurerm_resource_group.bbwm.name}"
   app_service_plan_id       = "${azurerm_app_service_plan.bbwm.id}"
   storage_connection_string = "${azurerm_storage_account.bbwm.primary_connection_string}"
-  https_only = true
-  version = "~2"
+  https_only                = true
+  version                   = "~2"
 
   app_settings {
     "APPINSIGHTS_INSTRUMENTATIONKEY" = "${azurerm_application_insights.bbwm.instrumentation_key}"
