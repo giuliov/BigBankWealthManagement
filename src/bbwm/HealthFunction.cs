@@ -11,7 +11,7 @@ namespace bbwm
     {
         [FunctionName("health")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "health/{depth}")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "health/{depth}")] HttpRequest req,
             string depth,
             ILogger log)
         {

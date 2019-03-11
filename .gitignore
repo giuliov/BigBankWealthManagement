@@ -335,3 +335,4 @@ ASALocalRun/
 _plan.dat
 build/Set-AzureRMSecrets.ps1
 build/terraform.exe
+secrets/
