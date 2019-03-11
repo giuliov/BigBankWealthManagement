@@ -67,6 +67,10 @@ resource "azurerm_function_app" "bbwm" {
 
   app_settings {
     "APPINSIGHTS_INSTRUMENTATIONKEY" = "${azurerm_application_insights.bbwm.instrumentation_key}"
+    "Bbwm_AlphAvantage_ApiKey"       = "${var.alphavantage_apikey}"
+    "Bbwm_CosmosDb_EndpointUri"      = "${azurerm_cosmosdb_account.bbwm.endpoint}"
+    "Bbwm_CosmosDb_PrimaryKey"       = "${azurerm_cosmosdb_account.bbwm.primary_master_key}"
+    "WEBSITE_RUN_FROM_PACKAGE"       = "1"
   }
 
   tags {

@@ -18,5 +18,9 @@ variable "dns_domain" {
   default     = "casavian.eu"
 }
 
+variable "alphavantage_apikey" {
+  description = "AlphAvantage ApiKey"
+}
+
 # EOF #
 
