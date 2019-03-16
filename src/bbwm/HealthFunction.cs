@@ -15,7 +15,7 @@ namespace bbwm
             string depth,
             ILogger log)
         {
-            log.LogInformation("health endpoint called.");
+            log.LogInformation($"health endpoint called for {depth}.");
 
             switch (depth.ToLowerInvariant())
             {
@@ -24,6 +24,7 @@ namespace bbwm
                     await portfolioRepo.HealthCheck();
                     var quoteRepo = new QuoteRepository(log);
                     await quoteRepo.HealthCheck();
+                    // TODO detailed output on which dependencies breaks
                     break;
                 case "basic":
                     break;

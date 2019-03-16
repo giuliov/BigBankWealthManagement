@@ -18,11 +18,15 @@ namespace bbwm
             string customerId,
             ILogger log)
         {
+            // TODO validate input
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
             string symbol = data?.symbol;
 
+            log.LogInformation($"customerPortfolio endpoint (POST) called for {customerId} and {symbol}.");
+
             var repo = new CustomerPortfolioRepository(log);
+            // TODO error handling
             await repo.AddSymbolToCustomerPortfolio(customerId, symbol);
 
             return new OkObjectResult("ok");
@@ -35,8 +39,8 @@ namespace bbwm
             ILogger log)
         {
             // TODO validate input
-
             var portfolioRepo = new CustomerPortfolioRepository(log);
+            log.LogInformation($"customerPortfolio endpoint called for {customerId}.");
             var portfolio = await portfolioRepo.GetCustomerPortfolioSymbols(customerId);
             log.LogInformation($"Customer {customerId} has '{portfolio}' symbols.");
 

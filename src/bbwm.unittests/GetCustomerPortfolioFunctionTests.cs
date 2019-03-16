@@ -47,6 +47,79 @@ namespace bbwm.unittests
 }
 ";
 
+
+        [Fact]
+        public async void Empty_portfolio_shold_return_empty()
+        {
+            var mockDocClient = Substitute.For<IDocumentClientMockable>();
+            mockDocClient
+                .ReadDocumentAsync<CustomerPortfolio>(
+                    UriFactory.CreateDocumentUri("BBMW", "customerPortfolio", "42"))
+                .Returns(
+                    new DocumentResponse<CustomerPortfolio>(
+                        new CustomerPortfolio
+                        {
+                            CustomerId = "42",
+                            Symbols = new List<string>()
+                        }
+                    )
+                );
+            CustomerPortfolioRepository.docClient = mockDocClient;
+
+            // God bless Richard Szalay for https://github.com/richardszalay/mockhttp
+            var mockHttpMessageHandler = new MockHttpMessageHandler();
+            mockHttpMessageHandler
+                .When("https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=MSFT&apikey=&datatype=json")
+                .Respond("application/json", jsonResultMSFT);
+            QuoteRepository.httpClient = new HttpClient(mockHttpMessageHandler);
+
+
+            var response = (OkObjectResult)await CustomerPortfolioFunctions.GetValues(TestFactory.CreateHttpRequest(), "42", logger);
+
+
+            var trex = response.Value as List<StockValue>;
+            Assert.NotNull(trex);
+            Assert.Equal(0, trex.Count);
+        }
+
+
+        [Fact]
+        public async void Should_return_one_ticker()
+        {
+            var mockDocClient = Substitute.For<IDocumentClientMockable>();
+            mockDocClient
+                .ReadDocumentAsync<CustomerPortfolio>(
+                    UriFactory.CreateDocumentUri("BBMW", "customerPortfolio", "42"))
+                .Returns(
+                    new DocumentResponse<CustomerPortfolio>(
+                        new CustomerPortfolio
+                        {
+                            CustomerId = "42",
+                            Symbols = new List<string> { "MSFT" }
+                        }
+                    )
+                );
+            CustomerPortfolioRepository.docClient = mockDocClient;
+
+            // God bless Richard Szalay for https://github.com/richardszalay/mockhttp
+            var mockHttpMessageHandler = new MockHttpMessageHandler();
+            mockHttpMessageHandler
+                .When("https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=MSFT&apikey=&datatype=json")
+                .Respond("application/json", jsonResultMSFT);
+            QuoteRepository.httpClient = new HttpClient(mockHttpMessageHandler);
+
+
+            var response = (OkObjectResult)await CustomerPortfolioFunctions.GetValues(TestFactory.CreateHttpRequest(), "42", logger);
+
+
+            var trex = response.Value as List<StockValue>;
+            Assert.NotNull(trex);
+            Assert.Equal(1, trex.Count);
+            Assert.Equal(112.53m, trex[0].Quote);
+            Assert.Equal("MSFT", trex[0].Symbol);
+        }
+
+
         [Fact]
         public async void Should_return_two_tickers()
         {
