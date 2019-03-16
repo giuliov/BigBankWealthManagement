@@ -25,8 +25,10 @@ namespace bbwm
                     var quoteRepo = new QuoteRepository(log);
                     await quoteRepo.HealthCheck();
                     break;
-                default:
+                case "basic":
                     break;
+                default:
+                    goto case "basic";
             }
 
             return (ActionResult)new OkObjectResult($"healthy");

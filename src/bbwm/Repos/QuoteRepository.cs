@@ -11,10 +11,11 @@ using System.Threading.Tasks;
 
 namespace bbwm
 {
-    class QuoteRepository
+    public class QuoteRepository
     {
         // see https://github.com/Azure/azure-functions-host/wiki/Managing-Connections
-        private static HttpClient httpClient = new HttpClient();
+        // and https://github.com/MicrosoftDocs/azure-docs/issues/14283#issuecomment-435995424
+        public static HttpClient httpClient = new HttpClient();
 
         private static readonly string apikey = Environment.GetEnvironmentVariable("Bbwm_AlphAvantage_ApiKey", EnvironmentVariableTarget.Process);
 
@@ -26,10 +27,12 @@ namespace bbwm
             this.log = log;
         }
 
-        public async Task HealthCheck()
+        public async Task<bool> HealthCheck()
         {
             string url = $"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=MSFT&apikey={apikey}&datatype=json";
-            //TODO
+            httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+            var response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+            return response.IsSuccessStatusCode;
         }
 
         public class Quote

@@ -30,6 +30,14 @@ namespace Functions.Tests
             return qs;
         }
 
+        public static DefaultHttpRequest CreateHttpRequest()
+        {
+            var request = new DefaultHttpRequest(new DefaultHttpContext())
+            {
+            };
+            return request;
+        }
+
         public static DefaultHttpRequest CreateHttpRequest(string queryStringKey, string queryStringValue)
         {
             var request = new DefaultHttpRequest(new DefaultHttpContext())

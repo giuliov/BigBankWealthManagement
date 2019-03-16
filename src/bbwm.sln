@@ -7,6 +7,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "bbwm", "bbwm\bbwm.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "bbwm.unittests", "bbwm.unittests\bbwm.unittests.csproj", "{6B915EBF-E526-47B7-B5AE-3D83AD4BA8B6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{EA1587BF-6066-4482-B9A7-7CC88E72F8DC}"
+	ProjectSection(SolutionItems) = preProject
+		..\doc\building.md = ..\doc\building.md
+		..\doc\configuration.md = ..\doc\configuration.md
+		..\doc\design.md = ..\doc\design.md
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

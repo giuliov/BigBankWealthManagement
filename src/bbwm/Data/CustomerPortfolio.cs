@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace bbwm
 {
-    class CustomerPortfolio
+    public class CustomerPortfolio
     {
         [JsonProperty(PropertyName = "id")]
         public string CustomerId { get; set; }

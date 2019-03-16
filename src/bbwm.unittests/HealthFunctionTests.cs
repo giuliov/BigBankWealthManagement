@@ -10,10 +10,10 @@ namespace bbwm.unittests
         private readonly ILogger logger = TestFactory.CreateLogger();
 
         [Fact]
-        public async void Http_trigger_should_return_known_string()
+        public async void basic_healthcheck_returns_ok()
         {
-            var request = TestFactory.CreateHttpRequest("not-used", null);
-            var response = (OkObjectResult)await HealthFunction.Run(request, "", logger);
+            var request = TestFactory.CreateHttpRequest();
+            var response = (OkObjectResult)await HealthFunction.Run(request, "basic", logger);
             Assert.Equal("healthy", response.Value);
         }
     }

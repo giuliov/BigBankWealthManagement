@@ -9,11 +9,15 @@ using System.Threading.Tasks;
 
 namespace bbwm
 {
-    class CustomerPortfolioRepository
+    public class CustomerPortfolioRepository
     {
-        private static readonly string endpointUri = Environment.GetEnvironmentVariable("Bbwm_CosmosDb_EndpointUri", EnvironmentVariableTarget.Process);
-        private static readonly string primaryKey = Environment.GetEnvironmentVariable("Bbwm_CosmosDb_PrimaryKey", EnvironmentVariableTarget.Process);
-        private static readonly DocumentClient docClient = new DocumentClient(new Uri(endpointUri), primaryKey);
+        private static readonly string endpointUri =
+            Environment.GetEnvironmentVariable("Bbwm_CosmosDb_EndpointUri", EnvironmentVariableTarget.Process)
+            ?? "https://cosmosdb.example.com";
+        private static readonly string primaryKey =
+            Environment.GetEnvironmentVariable("Bbwm_CosmosDb_PrimaryKey", EnvironmentVariableTarget.Process)
+            ?? "";
+        public static IDocumentClientMockable docClient = new DocumentClientReal(new Uri(endpointUri), primaryKey);
         private const string DatabaseName = "BBMW";
         private const string CollectionName = "customerPortfolio";
 
