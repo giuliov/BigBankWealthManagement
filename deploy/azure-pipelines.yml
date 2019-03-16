@@ -15,22 +15,24 @@ steps:
   inputs:
     version: '2.1.300'
 - task: DotNetCoreCLI@2
-  displayName: Restore
+  displayName: 'Restore Packages'
   inputs:
     command: restore
     projects: 'src/**/*.csproj'
 - task: DotNetCoreCLI@2
-  displayName: Build
+  displayName: 'Compile'
   inputs:
     command: build
     projects: 'src/**/*.csproj'
     arguments: '--configuration $(BuildConfiguration)'
 - task: DotNetCoreCLI@2
+  displayName: 'Run Tests'
   inputs:
     command: test
     projects: 'src/**/*tests.csproj'
     arguments: '--configuration $(BuildConfiguration)'
 - task: DotNetCoreCLI@2
+  displayName: 'Publish binaries'
   inputs:
     command: publish
     publishWebProjects: false
@@ -38,13 +40,13 @@ steps:
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
     zipAfterPublish: True
 - task: AzureRmWebAppDeployment@4
-  displayName: 'Azure App Service Deploy: bbwm'
+  displayName: 'Deploy to Azure App Service'
   inputs:
     azureSubscription: 'Visual Studio Enterprise (MVP) (9c08dcdd-9dcd-4955-9419-9c1161171463)'
     WebAppName: bbwm
     packageForLinux: '$(build.artifactstagingdirectory)/**/bbwm.zip'
 - task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact'
+  displayName: 'Upload Artifacts'
   inputs:
     PathtoPublish: '$(build.artifactstagingdirectory)'
   condition: succeededOrFailed()
