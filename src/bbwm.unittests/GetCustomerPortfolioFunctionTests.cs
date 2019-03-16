@@ -114,7 +114,7 @@ namespace bbwm.unittests
 
             var trex = response.Value as List<StockValue>;
             Assert.NotNull(trex);
-            Assert.Single(1);
+            Assert.Single(trex);
             Assert.Equal(112.53m, trex[0].Quote);
             Assert.Equal("MSFT", trex[0].Symbol);
         }
